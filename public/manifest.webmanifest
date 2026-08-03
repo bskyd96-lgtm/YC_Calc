@@ -1,0 +1,22 @@
+{
+  "name": "유천엔바이로 계산식",
+  "short_name": "유천 계산식",
+  "description": "수처리 실무 계산 도구",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f3f4f0",
+  "theme_color": "#183c34",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "/pwa-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/pwa-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
