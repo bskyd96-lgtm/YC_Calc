@@ -98,6 +98,10 @@ export default function Home() {
         [prev.mixing.mode]: { ...prev.mixing[prev.mixing.mode], [key]: value },
       },
     }));
+  const openCategory = (category) => {
+    setActive(category === "hydraulic" ? "flow" : category === "chemical" ? "pac" : category);
+    window.scrollTo({ top: 0, behavior: "auto" });
+  };
 
   const result = useMemo(() => {
     if (active === "flow") {
@@ -212,7 +216,7 @@ export default function Home() {
               <button
                 key={tool.id}
                 className="category-card"
-                onClick={() => setActive(tool.id === "hydraulic" ? "flow" : tool.id === "chemical" ? "pac" : tool.id)}
+                onClick={() => openCategory(tool.id)}
               >
                 <span className="category-number">0{index + 1}</span>
                 <span className="category-label">{tool.label}</span>

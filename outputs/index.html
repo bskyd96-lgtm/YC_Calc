@@ -123,7 +123,7 @@
       document.querySelectorAll("[data-mode]").forEach(el=>el.addEventListener("click",()=>{state.pac.mode=el.dataset.mode;render()}));
       document.querySelectorAll("[data-mix-mode]").forEach(el=>el.addEventListener("click",()=>{let mode=el.dataset.mixMode,values=state.mixing[mode+"Values"];state.mixing.mode=mode;Object.assign(state.mixing,values);render()}));
     }
-    document.querySelectorAll("[data-home]").forEach(el=>el.addEventListener("click",()=>{const id=el.dataset.home;active=id==="hydraulic"?"flow":id==="chemical"?"pac":id;render()}));
+    document.querySelectorAll("[data-home]").forEach(el=>el.addEventListener("click",()=>{const id=el.dataset.home;active=id==="hydraulic"?"flow":id==="chemical"?"pac":id;window.scrollTo({top:0,behavior:"auto"});render()}));
     $("#brand").onclick=()=>{active="home";$("#workspace").classList.add("nav-closed");$("#workspace").classList.remove("nav-open");$("#menuToggle").textContent="☰";$("#menuToggle").setAttribute("aria-expanded","false");render()};
     $("#reset").onclick=()=>{if(active==="mixing"){let mode=state.mixing.mode,cleared={capacity:"",length:"",width:"",height:""};state.mixing[mode+"Values"]={...cleared};Object.assign(state.mixing,cleared)}else if(emptyValues[active])state[active]=JSON.parse(JSON.stringify(emptyValues[active]));render("reset")};
     $("#menuToggle").onclick=()=>{const workspace=$("#workspace"),opening=workspace.classList.contains("nav-closed");workspace.classList.toggle("nav-closed",!opening);workspace.classList.toggle("nav-open",opening);$("#menuToggle").textContent=opening?"×":"☰";$("#menuToggle").setAttribute("aria-expanded",String(opening));$("#menuToggle").setAttribute("aria-label",opening?"대분류 메뉴 닫기":"대분류 메뉴 열기")};
