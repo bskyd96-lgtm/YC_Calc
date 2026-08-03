@@ -21,6 +21,13 @@ const navTools = [
   { id: "coagulant", label: "무기응집제투입량계산식" },
 ];
 
+const categoryDescriptions = {
+  hydraulic: "월류수심 · 오리피스 · V-노치 · 필요구경",
+  mixing: "급속·완속 혼화조 용적 및 체류시간",
+  chemical: "PAC·폴리머 투입량 계산",
+  coagulant: "T-P 기준 무기응집제 투입량 계산",
+};
+
 const initialValues = {
   flow: { weirLength: "2.5", overflowDepth: "150" },
   depth: { capacity: "23089.18", weirLength: "2.5" },
@@ -73,7 +80,7 @@ function Field({ label, value, onChange, unit, hint }) {
 }
 
 export default function Home() {
-  const [active, setActive] = useState("flow");
+  const [active, setActive] = useState(null);
   const [values, setValues] = useState(initialValues);
   const [copied, setCopied] = useState(false);
   const [navOpen, setNavOpen] = useState(false);
@@ -186,13 +193,36 @@ export default function Home() {
   return (
     <main>
       <header>
-        <a className="brand" href="#" aria-label="유천엔바이로 홈">
+        <a className="brand" href="#" aria-label="유천엔바이로 홈" onClick={(event) => { event.preventDefault(); setActive(null); setNavOpen(false); }}>
           <img src="/yucheon-enviro-logo.png" alt="유천엔바이로 YUCHEON ENVIRO" />
         </a>
       </header>
 
       <section className="hero simple-hero"><h1>유천엔바이로 계산식</h1></section>
 
+      {active === null ? (
+        <section className="home-screen" aria-labelledby="home-title">
+          <div className="home-copy">
+            <span className="home-kicker">YU CHEON ENVIRO · CALCULATORS</span>
+            <h2 id="home-title">계산 항목을 선택하세요</h2>
+            <p>필요한 대분류를 선택하면 세부 계산 항목으로 이동합니다.</p>
+          </div>
+          <div className="category-grid">
+            {navTools.map((tool, index) => (
+              <button
+                key={tool.id}
+                className="category-card"
+                onClick={() => setActive(tool.id === "hydraulic" ? "flow" : tool.id === "chemical" ? "pac" : tool.id)}
+              >
+                <span className="category-number">0{index + 1}</span>
+                <span className="category-label">{tool.label}</span>
+                <span className="category-description">{categoryDescriptions[tool.id]}</span>
+                <span className="category-arrow">↗</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      ) : (
       <section className={`workspace ${navOpen ? "nav-open" : "nav-closed"}`}>
         <button className="menu-toggle" onClick={() => setNavOpen((open) => !open)} aria-expanded={navOpen} aria-label={navOpen ? "대분류 메뉴 닫기" : "대분류 메뉴 열기"}>{navOpen ? "×" : "☰"}</button>
         <nav className="tool-nav" aria-label="계산 도구">
@@ -304,6 +334,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      )}
 
       <footer>
         <span>유천엔바이로 계산식</span>
