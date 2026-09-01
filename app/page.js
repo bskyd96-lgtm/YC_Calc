@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 
 const tools = [
   { id: "depth", label: "월류수심" },
@@ -84,6 +84,16 @@ export default function Home() {
   const [values, setValues] = useState(initialValues);
   const [copied, setCopied] = useState(false);
   const [navOpen, setNavOpen] = useState(false);
+  const scrollToTopAfterCategoryOpen = useRef(false);
+
+  useLayoutEffect(() => {
+    if (!scrollToTopAfterCategoryOpen.current || active === null) return;
+
+    scrollToTopAfterCategoryOpen.current = false;
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [active]);
 
   const set = (section, key, value) =>
     setValues((prev) => ({
@@ -99,8 +109,8 @@ export default function Home() {
       },
     }));
   const openCategory = (category) => {
+    scrollToTopAfterCategoryOpen.current = true;
     setActive(category === "hydraulic" ? "flow" : category === "chemical" ? "pac" : category);
-    window.scrollTo({ top: 0, behavior: "auto" });
   };
 
   const result = useMemo(() => {
