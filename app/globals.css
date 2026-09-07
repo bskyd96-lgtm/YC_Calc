@@ -59,6 +59,8 @@ h1 em::after { content: ""; position: absolute; left: -3px; right: -9px; height:
 .workspace { position: relative; display: grid; grid-template-columns: 310px 1fr; max-width: 1240px; margin: 0 auto; border-left: 1px solid var(--line); border-right: 1px solid var(--line); transition: grid-template-columns .54s cubic-bezier(.22,.75,.25,1); }
 .workspace.nav-closed { grid-template-columns: 0 1fr; }
 .tool-nav { min-width: 0; padding: 76px 24px 42px; border-right: 1px solid var(--line); overflow: hidden; opacity: 1; transition: opacity .3s ease, padding .54s ease; }
+.workspace.nav-closed { transition-duration: .81s; }
+.workspace.nav-closed .tool-nav { transition-duration: .45s, .81s; }
 .workspace.nav-closed .tool-nav { padding-inline: 0; opacity: 0; border-right: 0; pointer-events: none; }
 .menu-toggle { position: absolute; z-index: 5; top: 18px; left: 18px; width: 42px; height: 42px; border: 1px solid #bac4c0; background: var(--panel); color: var(--deep); font-size: 21px; line-height: 1; cursor: pointer; transition: background-color .3s ease, color .3s ease, border-color .3s ease; }
 .menu-toggle:hover { background: var(--deep); border-color: var(--deep); color: #fff; }

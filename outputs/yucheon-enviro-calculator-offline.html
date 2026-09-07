@@ -33,6 +33,7 @@
     @media(max-width:520px){.home-screen{padding:40px 20px 56px}.category-grid{grid-template-columns:1fr}.category-card{min-height:160px;padding:22px}}
     @media(max-width:520px){header{height:68px}.brand img{height:36px;max-width:150px}.ready{font-size:9px}.hero{padding-top:44px}h1{font-size:52px}.fields{grid-template-columns:1fr}.result{padding:25px 21px 74px}.big.dual{grid-template-columns:1fr}.formula{flex-direction:column;gap:5px}.copy{left:21px;right:21px;width:calc(100% - 42px)}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+    .work.nav-closed{transition-duration:.81s}.work.nav-closed nav{transition-duration:.45s,.81s}
   </style>
 </head>
 <body>
@@ -118,12 +119,13 @@
       if(action==="reset"){document.querySelectorAll("#fields [data-key]").forEach(el=>el.closest(".field")?.classList.add("reset-animate"))}
       else{void calcPanel.offsetWidth;calcPanel.classList.add("switching")}
       document.querySelectorAll("[data-key]").forEach(el=>el.addEventListener("input",e=>{let key=e.target.dataset.key;state[active][key]=e.target.value;if(active==="mixing")state.mixing[state.mixing.mode+"Values"][key]=e.target.value;calc()}));
-      document.querySelectorAll("[data-tool]").forEach(el=>el.addEventListener("click",()=>{active=el.dataset.tool==="hydraulic"?"flow":el.dataset.tool==="chemical"?"pac":el.dataset.tool;render()}));
+      document.querySelectorAll("[data-tool]").forEach(el=>el.addEventListener("click",()=>{active=el.dataset.tool==="hydraulic"?"flow":el.dataset.tool==="chemical"?"pac":el.dataset.tool;$("#workspace").classList.add("nav-closed");$("#workspace").classList.remove("nav-open");$("#menuToggle").textContent="☰";$("#menuToggle").setAttribute("aria-expanded","false");$("#menuToggle").setAttribute("aria-label","대분류 메뉴 열기");render();scrollPageToTop();requestAnimationFrame(scrollPageToTop)}));
       document.querySelectorAll("[data-sub]").forEach(el=>el.addEventListener("click",()=>{active=el.dataset.sub;render()}));
       document.querySelectorAll("[data-mode]").forEach(el=>el.addEventListener("click",()=>{state.pac.mode=el.dataset.mode;render()}));
       document.querySelectorAll("[data-mix-mode]").forEach(el=>el.addEventListener("click",()=>{let mode=el.dataset.mixMode,values=state.mixing[mode+"Values"];state.mixing.mode=mode;Object.assign(state.mixing,values);render()}));
     }
-    const scrollPageToTop=()=>{window.scrollTo({top:0,left:0,behavior:"auto"});document.documentElement.scrollTop=0;document.body.scrollTop=0};
+    let scrollFrame;
+    const scrollPageToTop=()=>{cancelAnimationFrame(scrollFrame);const startY=window.scrollY,startTime=performance.now(),duration=window.matchMedia("(prefers-reduced-motion: reduce)").matches?0:810;const step=now=>{const progress=duration?Math.min((now-startTime)/duration,1):1;window.scrollTo({top:startY*Math.pow(1-progress,3),left:0,behavior:"instant"});if(progress<1)scrollFrame=requestAnimationFrame(step)};scrollFrame=requestAnimationFrame(step)};
     document.querySelectorAll("[data-home]").forEach(el=>el.addEventListener("click",()=>{const id=el.dataset.home;active=id==="hydraulic"?"flow":id==="chemical"?"pac":id;render();scrollPageToTop();requestAnimationFrame(scrollPageToTop)}));
     $("#brand").onclick=()=>{active="home";$("#workspace").classList.add("nav-closed");$("#workspace").classList.remove("nav-open");$("#menuToggle").textContent="☰";$("#menuToggle").setAttribute("aria-expanded","false");render()};
     $("#reset").onclick=()=>{if(active==="mixing"){let mode=state.mixing.mode,cleared={capacity:"",length:"",width:"",height:""};state.mixing[mode+"Values"]={...cleared};Object.assign(state.mixing,cleared)}else if(emptyValues[active])state[active]=JSON.parse(JSON.stringify(emptyValues[active]));render("reset")};

@@ -90,10 +90,18 @@ export default function Home() {
     if (!scrollToTopAfterCategoryOpen.current || active === null) return;
 
     scrollToTopAfterCategoryOpen.current = false;
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-  }, [active]);
+    const startY = window.scrollY;
+    const startTime = performance.now();
+    let frame;
+    const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 810;
+    const step = (now) => {
+      const progress = duration ? Math.min((now - startTime) / duration, 1) : 1;
+      window.scrollTo({ top: startY * Math.pow(1 - progress, 3), left: 0, behavior: "instant" });
+      if (progress < 1) frame = requestAnimationFrame(step);
+    };
+    frame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frame);
+  }, [active, navOpen]);
 
   const set = (section, key, value) =>
     setValues((prev) => ({
@@ -110,6 +118,7 @@ export default function Home() {
     }));
   const openCategory = (category) => {
     scrollToTopAfterCategoryOpen.current = true;
+    setNavOpen(false);
     setActive(category === "hydraulic" ? "flow" : category === "chemical" ? "pac" : category);
   };
 
@@ -242,7 +251,7 @@ export default function Home() {
         <nav className="tool-nav" aria-label="계산 도구">
           <p>CALCULATORS <span>04</span></p>
           {navTools.map((tool, index) => (
-            <button key={tool.id} className={(tool.id === "hydraulic" && isHydraulic) || (tool.id === "chemical" && isChemical) || active === tool.id ? "active" : ""} onClick={() => setActive(tool.id === "hydraulic" ? "flow" : tool.id === "chemical" ? "pac" : tool.id)}>
+            <button key={tool.id} className={(tool.id === "hydraulic" && isHydraulic) || (tool.id === "chemical" && isChemical) || active === tool.id ? "active" : ""} onClick={() => openCategory(tool.id)}>
               <span className="tool-index">0{index + 1}</span>
               <span className="tool-copy"><b>{tool.label}</b></span>
               <span className="arrow">↗</span>
