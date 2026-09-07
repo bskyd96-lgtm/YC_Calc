@@ -61,7 +61,7 @@ const pretty = (value, digits = 2) =>
     ? value.toLocaleString("ko-KR", { maximumFractionDigits: digits })
     : "—";
 
-function Field({ label, value, onChange, unit, hint }) {
+function Field({ label, value, onChange, unit }) {
   return (
     <label className="field">
       <span className="field-label">{label}</span>
@@ -74,7 +74,6 @@ function Field({ label, value, onChange, unit, hint }) {
         />
         <span>{unit}</span>
       </div>
-      {hint && <small>{hint}</small>}
     </label>
   );
 }
@@ -93,7 +92,7 @@ export default function Home() {
     const startY = window.scrollY;
     const startTime = performance.now();
     let frame;
-    const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 810;
+    const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 500;
     const step = (now) => {
       const progress = duration ? Math.min((now - startTime) / duration, 1) : 1;
       window.scrollTo({ top: startY * Math.pow(1 - progress, 3), left: 0, behavior: "instant" });
@@ -223,6 +222,20 @@ export default function Home() {
 
       <section className="hero simple-hero"><h1>유천엔바이로 계산식</h1></section>
 
+      <section className={`workspace ${navOpen ? "nav-open" : "nav-closed"}`}>
+        <div className="menu-track"><button className="menu-toggle" onClick={() => setNavOpen((open) => !open)} aria-expanded={navOpen} aria-label={navOpen ? "대분류 메뉴 닫기" : "대분류 메뉴 열기"}>{navOpen ? "×" : "☰"}</button></div>
+        <nav className="tool-nav" aria-label="계산 도구">
+          <p>CALCULATORS <span>04</span></p>
+          {navTools.map((tool, index) => (
+            <button key={tool.id} className={(tool.id === "hydraulic" && isHydraulic) || (tool.id === "chemical" && isChemical) || active === tool.id ? "active" : ""} onClick={() => openCategory(tool.id)}>
+              <span className="tool-index">0{index + 1}</span>
+              <span className="tool-copy"><b>{tool.label}</b></span>
+              <span className="arrow">↗</span>
+            </button>
+          ))}
+          <div className="nav-note"><span>i</span><p>계산 결과는 설계 및 운전 검토를 위한 참고값입니다.</p></div>
+        </nav>
+
       {active === null ? (
         <section className="home-screen" aria-labelledby="home-title">
           <div className="home-copy">
@@ -246,20 +259,6 @@ export default function Home() {
           </div>
         </section>
       ) : (
-      <section className={`workspace ${navOpen ? "nav-open" : "nav-closed"}`}>
-        <button className="menu-toggle" onClick={() => setNavOpen((open) => !open)} aria-expanded={navOpen} aria-label={navOpen ? "대분류 메뉴 닫기" : "대분류 메뉴 열기"}>{navOpen ? "×" : "☰"}</button>
-        <nav className="tool-nav" aria-label="계산 도구">
-          <p>CALCULATORS <span>04</span></p>
-          {navTools.map((tool, index) => (
-            <button key={tool.id} className={(tool.id === "hydraulic" && isHydraulic) || (tool.id === "chemical" && isChemical) || active === tool.id ? "active" : ""} onClick={() => openCategory(tool.id)}>
-              <span className="tool-index">0{index + 1}</span>
-              <span className="tool-copy"><b>{tool.label}</b></span>
-              <span className="arrow">↗</span>
-            </button>
-          ))}
-          <div className="nav-note"><span>i</span><p>계산 결과는 설계 및 운전 검토를 위한 참고값입니다.</p></div>
-        </nav>
-
         <div className="calculator">
           <div className="calc-head">
             <div>
@@ -356,8 +355,8 @@ export default function Home() {
             <button className="copy" onClick={copyResult} disabled={invalid}>{copied ? "✓ 복사됨" : "결과 복사"}</button>
           </div>
         </div>
-      </section>
       )}
+      </section>
 
       <footer>
         <span>유천엔바이로 계산식</span>
